@@ -1,569 +1,227 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>시스메이트 레퍼런스 & 멀티비전 &  LED계산기</title>
+    <title>얼마내 PRO - 맞춤 경조사 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .page {
-            display: none;
-        }
-        .page.active {
-            display: block;
-        }
-        .nav-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .nav-btn {
-            background-color: #007BFF;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .nav-btn:hover {
-            background-color: #0056b3;
-        }
-        .nav-btn.active {
-            background-color: #4CAF50;
-        }
-/* CSS에 추가 */
-.search-container {
-    margin: 20px auto;
-    max-width: 500px;
-    text-align: center;
-}
-.item-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    transition: transform 0.3s ease;
-}
-
-.item-link:hover {
-    transform: translateY(-5px);
-}
-
-.item {
-    cursor: pointer;
-}
-#searchInput {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    border: 2px solid #4CAF50;
-    border-radius: 25px;
-    background-color: #2a2a2a;
-    color: #ffffff;
-    font-size: 16px;
-}
-
-#searchInput:focus {
-    outline: none;
-    border-color: #45a049;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-}
-
-        /* 레퍼런스 페이지 스타일 */
-        .category-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-        .item {
-            background-color: #1e1e1e;
-            border-radius: 10px;
-            padding: 20px;
-            width: 300px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .item img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }
-        .item h2 {
-            color: #4CAF50;
-            margin-top: 15px;
-        }
-        .item p {
-            color: #cccccc;
-        }
-
-        /* 계산기 공통 스타일 */
-        .calculator-container {
-            background-color: #1e1e1e;
-            border-radius: 10px;
-            padding: 20px;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        select, input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background-color: #2a2a2a;
-            color: #ffffff;
-        }
-        .calculator-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 0;
-        }
-        .calculator-btn:hover {
-            background-color: #45a049;
-        }
-        .result {
-            margin-top: 20px;
-            color: #cccccc;
-            font-size: 1.2em;
-        }
-        .visualization {
-            margin: 20px auto;
-            display: grid;
-            gap: 5px;
-            justify-content: center;
-            padding: 10px;
-            max-width: 600px;
-            background-color: #1a1a1a;
-            border: 1px solid #555;
-        }
-        .panel {
-            background-color: #007BFF;
-            border: 1px solid #0056b3;
-            color: white;
-            font-size: 0.8em;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background: #f8fafc; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .extra-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
     </style>
 </head>
-<body>
-    <div class="container">
-        
-        <p style="text-align: center;">SYSMATE Total Solution v1.2</p>
-        
-        <!-- 네비게이션 버튼 -->
-        <div class="nav-buttons">
-            <button class="nav-btn active" data-page="reference">레퍼런스</button>
-            <button class="nav-btn" data-page="calculator">멀티비전 계산기</button>
-            <button class="nav-btn" data-page="led-calculator">LED 계산기</button>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div class="h-2 bg-gray-100 flex">
+            <div id="progressBar" class="h-full bg-blue-600 transition-all duration-500" style="width: 25%;"></div>
         </div>
-<!-- 네비게이션 버튼 아래에 추가 -->
-<div class="search-container">
-    <input type="text" id="searchInput" placeholder="검색어를 입력하세요..." onkeyup="searchItems()">
-</div>
-        <!-- 레퍼런스 페이지 -->
-        <div class="page active" id="reference-page">
-            <div class="category-content">
-                <a href="https://www.sysmate.co.kr/reference/REC001" target="_blank" class="item-link">
-                    <div class="item">
-                        <img src="https://www.sysmate.co.kr/data/upload/editor/e3afa94e582741329cb08029e7e85e5e.jpg" alt="사이니지 이미지 1">
-                        <h2>사이니지 설치사례</h2>
-                        <p>싱글/스탠드/아웃도어사이니지/더갤러리/전자칠판 설치사례</p>
-                    </div>
-                </a>
-                <a href="https://www.sysmate.co.kr/reference/REC003" target="_blank" class="item-link">
-                    <div class="item">
-                        <img src="https://www.sysmate.co.kr/data/upload/editor/e14a2cd2d6e44a49a65afba4001fe6e3.jpg" alt="사이니지 이미지 2">
-                        <h2>멀티비전 설치사례</h2>
-                        <p>중소형/대형 멀티비전 설치사례</p>
-                    </div>
-                </a>
-                <a href="https://www.sysmate.co.kr/reference/REC002" target="_blank" class="item-link">
-                    <div class="item">
-                        <img src="https://www.sysmate.co.kr/data/upload/editor/4af4ff8347a040e68a64b177118359b4.jpg" alt="사이니지 이미지 3">
-                        <h2>LED디스플레이 설치사례</h2>
-                        <p>실내용/옥외용 LED디스플레이 설치사례</p>
-                    </div>
-                </a>
-                <a href="https://www.sysmate.co.kr/reference/REC004" target="_blank" class="item-link">
-                    <div class="item">
-                        <img src="https://www.sysmate.co.kr/data/upload/editor/37382ecac0e24802b75c7d57181dec00.jpg" alt="사이니지 이미지 3">
-                        <h2>공공조달 설치사례</h2>
-                        <p>이지키오스크/메이저맵/멘탈케어/화이트보드 등 설치사례</p>
-                    </div>
-                </a>
-                <a href="https://www.sysmate.co.kr/reference/REC005" target="_blank" class="item-link">
-                    <div class="item">
-                        <img src="https://www.sysmate.co.kr/data/upload/editor/88f21266629b4412894fa76bc4be820b.jpg" alt="사이니지 이미지 3">
-                        <h2>전자현수막 설치사례</h2>
-                        <p>LED/LCD전자현수막  설치사례</p>
-                    </div>
-                </a>
-                
-                <a href="https://www.sysmate.co.kr/reference/REC006" target="_blank" class="item-link">
-                    <div class="item">
-                        <img src="https://www.sysmate.co.kr/data/upload/editor/e374c98b75a0433f8ae4d9e41a25e9f6.jpg" alt="사이니지 이미지 3">
-                        <h2>전자게시대 설치사례</h2>
-                        <p>LED/LCD전자게시대  설치사례</p>
-                    </div>
-                </a>
+
+        <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+                <p id="stepCounter" class="text-xs font-semibold text-gray-400">1/3</p>
+                <p class="text-xs text-gray-400">단위: 만원</p>
             </div>
-        </div>
-
-        <!-- 멀티비전 계산기 페이지 -->
-        <div class="page" id="calculator-page">
-            <div class="calculator-container">
-                <h1>시스메이트 멀티비전 계산기 v1.1</h1>
-                <hr>
-                <form id="calculator">
-                    <label for="product">제품군 선택:</label>
-                    <select id="product" name="product">
-                        <option value="1">SYS-55ENB-5LW (2.6mm)</option>
-                        <option value="2">SYS-55ENB-7LW (2.6mm)</option>
-                        <option value="3">SYS-55RNB-5LW (0.88mm)</option>
-                        <option value="4">SYS-55RNB-7LW (0.88mm)</option>
-                    </select>
-
-                    <label for="orientation">화면 방향:</label>
-                    <select id="orientation" name="orientation">
-                        <option value="horizontal">가로</option>
-                        <option value="vertical">세로</option>
-                    </select>
-
-                    <label for="rows">세로 단의 개수:</label>
-                    <input type="number" id="rows" name="rows" min="1" required>
-
-                    <label for="columns">가로 열의 개수:</label>
-                    <input type="number" id="columns" name="columns" min="1" required>
-
-                    <button type="button" class="calculator-btn" onclick="calculateMultiVision()">계산하기</button>
-                </form>
-
-                <div class="result" id="result"></div>
-                <div class="visualization" id="visualization"></div>
-            </div>
-        </div>
-
-                <!-- LED 계산기 페이지 -->
-                <div class="page" id="led-calculator-page">
-                    <div class="calculator-container">
-                        <h1>LED 스크린 사이즈 및 해상도 계산기 <br>by hsy v1.4</h1>
-                        <hr>
-                        <br>
-                        <form id="led-calculator">
-                            <label for="led-product">제품군 선택:</label>
-                            <select id="led-product" name="product">
-                                <option value="1.25">P1.25 (600mm x 337.5mm)</option>
-                                <option value="1.56">P1.56 (600mm x 337.5mm)</option>
-                                <option value="1.87">P1.87 (600mm x 337.5mm)</option>
-                                <option value="2.5">P2.5 (480mm x 480mm)</option>
-                            </select>
-                            <label for="led-rows">세로 단의 개수:</label>
-                            <input type="number" id="led-rows" name="rows" min="1" required>
-                            <label for="led-columns">가로 열의 개수:</label>
-                            <input type="number" id="led-columns" name="columns" min="1" required>
-                            <button type="button" class="calculator-btn" onclick="calculateLEDSize()">계산하기</button>
-                        </form>
-        
-                        <hr>
-                        
-                        <h2>가로/세로 크기로 적합한 제품군 추천</h2>
-                        <label for="width">가로 크기 (mm):</label>
-                        <input type="number" id="width" name="width" min="1" required>
-                        <label for="height">세로 크기 (mm):</label>
-                        <input type="number" id="height" name="height" min="1" required>
-                        <button type="button" class="calculator-btn" onclick="recommendProduct()">추천하기</button>
-                        
-                        <div class="result" id="led-result"></div>
-                        <div class="visualization" id="led-visualization"></div>
-                        <div class="result" id="recommendedProduct"></div>
-                    </div>
+            <div id="step1" class="step-content active">
+                <h2 class="text-2xl font-bold mb-2">어떤 경조사인가요?</h2>
+                <p class="text-gray-500 mb-8 text-sm">행사 성격에 따라 기준 금액이 달라집니다.</p>
+                <div class="grid grid-cols-1 gap-4">
+                    <button type="button" onclick="nextStep(1, {event: 'wedding'})" class="flex items-center p-5 border-2 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <span class="text-3xl mr-4">💍</span>
+                        <div class="text-left"><p class="font-bold">결혼식</p><p class="text-xs text-gray-400">식대와 장소 고려</p></div>
+                    </button>
+                    <button type="button" onclick="nextStep(1, {event: 'funeral'})" class="flex items-center p-5 border-2 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <span class="text-3xl mr-4">🙏</span>
+                        <div class="text-left"><p class="font-bold">장례식</p><p class="text-xs text-gray-400">조의와 위로의 마음</p></div>
+                    </button>
+                    <button type="button" onclick="nextStep(1, {event: 'baby'})" class="flex items-center p-5 border-2 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <span class="text-3xl mr-4">👶</span>
+                        <div class="text-left"><p class="font-bold">돌잔치</p><p class="text-xs text-gray-400">축하와 아이의 첫 생일</p></div>
+                    </button>
                 </div>
             </div>
-        
-            <script>
-                
-                // JavaScript에 추가
-function searchItems() {
-    const searchValue = document.getElementById('searchInput').value.toLowerCase();
-    const items = document.getElementsByClassName('item');
 
-    for (let item of items) {
-        const title = item.querySelector('h2').innerText.toLowerCase();
-        const description = item.querySelector('p').innerText.toLowerCase();
-        
-        if (title.includes(searchValue) || description.includes(searchValue)) {
-            item.style.display = '';
-        } else {
-            item.style.display = 'none';
+            <div id="step2" class="step-content">
+                <h2 class="text-2xl font-bold mb-6">상대방과 얼마나 친한가요?</h2>
+                <div class="space-y-3">
+                    <button type="button" onclick="nextStep(2, {score: 10})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">거의 가족 같은 사이 (절친)</button>
+                    <button type="button" onclick="nextStep(2, {score: 7})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">자주 소통하는 직장 동료/친구</button>
+                    <button type="button" onclick="nextStep(2, {score: 4})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">가끔 연락하는 지인</button>
+                    <button type="button" onclick="nextStep(2, {score: 1})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">연락이 뜸했던 동창/동료</button>
+                </div>
+                <button type="button" onclick="prevStep(2)" class="w-full mt-6 py-3 border rounded-2xl text-gray-600 font-semibold hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">이전</button>
+            </div>
+
+            <div id="step3" class="step-content">
+                <h2 class="text-2xl font-bold mb-6">상세 상황을 알려주세요.</h2>
+                <div class="space-y-6">
+                    <div>
+                        <p id="pplLabel" class="text-sm font-semibold text-gray-700 mb-3">동행 인원 (본인 포함)</p>
+                        <div class="grid grid-cols-3 gap-2" id="pplGroup">
+                            <button type="button" onclick="setExtra('ppl', 1, this)" class="extra-btn py-3 border rounded-xl active focus:outline-none focus:ring-2 focus:ring-blue-200">1명</button>
+                            <button type="button" onclick="setExtra('ppl', 2, this)" class="extra-btn py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">2명</button>
+                            <button type="button" onclick="setExtra('ppl', 3, this)" class="extra-btn py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">3명</button>
+                            <button type="button" onclick="setExtra('ppl', 4, this)" class="extra-btn py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">4명</button>
+                            <button type="button" onclick="setExtra('ppl', 5, this)" class="extra-btn py-3 border rounded-xl col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-200">5명 이상 (가족)</button>
+                        </div>
+                    </div>
+                    <div>
+                        <p id="eatLabel" class="text-sm font-semibold text-gray-700 mb-3">식사 여부</p>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="setExtra('eat', 'yes', this)" class="extra-btn flex-1 py-3 border rounded-xl active focus:outline-none focus:ring-2 focus:ring-blue-200">식사 함</button>
+                            <button type="button" onclick="setExtra('eat', 'no', this)" class="extra-btn flex-1 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">안 함 / 답례품</button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="showResult()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold mt-4 shadow-lg active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">계산 결과 보기</button>
+                    <button type="button" onclick="prevStep(3)" class="w-full py-3 border rounded-2xl text-gray-600 font-semibold hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">이전</button>
+                </div>
+            </div>
+
+            <div id="resultStep" class="step-content text-center">
+                <div class="py-10">
+                    <p class="text-gray-500 font-medium mb-2">가장 적절한 금액은</p>
+                    <div class="text-6xl font-black text-blue-600 mb-2" aria-live="polite"><span id="totalAmount">0</span>만원</div>
+                    <p id="rangeText" class="text-sm text-gray-500 mb-6"></p>
+                    <div id="analysisBox" class="bg-blue-50 p-5 rounded-2xl text-left text-sm text-blue-800 leading-relaxed"></div>
+                    <p class="text-[11px] text-gray-400 mt-4 leading-relaxed">
+                        참고: 지역/식대/관계/회사 관행에 따라 달라질 수 있어요. 무리하지 않는 선에서 조정하세요.
+                    </p>
+                </div>
+                <button type="button" onclick="location.reload()" class="w-full py-3 text-gray-400 font-medium hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200">처음부터 다시 하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userData = { event: '', score: 0, ppl: 1, eat: 'yes' };
+        let currentStep = 1;
+        const TOTAL_STEPS = 4; // step1~step3 + result
+
+        function updateProgress(step) {
+            const pct = (step / TOTAL_STEPS) * 100;
+            document.getElementById('progressBar').style.width = pct + '%';
         }
-    }
-}
-                
-                             
-                
-                // 네비게이션 버튼 이벤트
-                const navButtons = document.querySelectorAll('.nav-btn');
-                const pages = document.querySelectorAll('.page');
-        
-                navButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const pageName = this.dataset.page;
-                        navButtons.forEach(btn => btn.classList.remove('active'));
-                        pages.forEach(page => page.classList.remove('active'));
-                        this.classList.add('active');
-                        document.getElementById(`${pageName}-page`).classList.add('active');
-                    });
-                });
-        
-                // 멀티비전 계산기 함수
-                function calculateMultiVision() {
-                    const product = document.getElementById("product").value;
-                    const orientation = document.getElementById("orientation").value;
-                    const rowCount = parseInt(document.getElementById("rows").value, 10);
-                    const columnCount = parseInt(document.getElementById("columns").value, 10);
-        
-                    const products = {
-                        1: { name: "SYS-55ENB-5LW", width: 1212.2, height: 683, weight: 19.6, power: 187.5, price: 4150000 },
-                        2: { name: "SYS-55ENB-7LW", width: 1212.2, height: 683, weight: 19.7, power: 242.0, price: 4950000 },
-                        3: { name: "SYS-55RNB-5LW", width: 1210.51, height: 681.22, weight: 18.5, power: 233.5, price: 5900000 },
-                        4: { name: "SYS-55RNB-7LW", width: 1210.51, height: 681.22, weight: 18.1, power: 233.5, price: 7200000 }
-                    };
-        
-                    const selectedProduct = products[product];
-                    const totalRows = orientation === "horizontal" ? rowCount : columnCount;
-                    const totalColumns = orientation === "horizontal" ? columnCount : rowCount;
-        
-                    const totalWidth = orientation === "horizontal"
-                        ? selectedProduct.width * totalColumns
-                        : selectedProduct.height * totalColumns;
-                    const totalHeight = orientation === "horizontal"
-                        ? selectedProduct.height * totalRows
-                        : selectedProduct.width * totalRows;
-        
-                    const totalWeight = (selectedProduct.weight * totalRows * totalColumns).toFixed(1);
-                    const totalPower = (selectedProduct.power * totalRows * totalColumns).toFixed(1);
-                    const totalPrice = (selectedProduct.price * totalRows * totalColumns).toLocaleString("ko-KR");
-                    const totalWidthInInches = (totalWidth * 0.03937).toFixed(2);
-                    const totalHeightInInches = (totalHeight * 0.03937).toFixed(2);
-                    const diagonalInches = Math.sqrt(totalWidth ** 2 + totalHeight ** 2) * 0.03937;
-        
-                    function calculateAspectRatio(width, height) {
-                        const aspectRatio = width / height;
-                        const standardWidth = 16;
-                        const standardHeight = 9;
-                        const scaledHeight = standardWidth / aspectRatio;
-                        return {
-                            aspectRatioValue: aspectRatio.toFixed(2),
-                            aspectRatioText: `${standardWidth} : ${scaledHeight.toFixed(1)}`
-                        };
-                    }
-        
-                    const { aspectRatioValue, aspectRatioText } = calculateAspectRatio(totalWidth, totalHeight);
-        
-                    document.getElementById("result").innerHTML = `
-                        <p>화면 방향: ${orientation === "horizontal" ? "가로" : "세로"}</p>
-                        <p>제품명: ${selectedProduct.name}</p>
-                        <p>전체 크기: ${totalWidth.toFixed(1)} mm x ${totalHeight.toFixed(1)} mm</p>
-                        <p>전체 크기(인치): ${totalWidthInInches} in x ${totalHeightInInches} in</p>
-                        <p>대각선 길이: ${diagonalInches.toFixed(2)} in</p>
-                        <p>화면 비율(실제): ${aspectRatioValue} : 1</p>
-                        <p>화면 비율(16:9 기준): ${aspectRatioText}</p>
-                        <p>전체 무게: ${totalWeight} kg</p>
-                        <p>최대소비 전력: ${totalPower} W</p>
-                        <p>조달가: ₩ ${totalPrice}</p>
-                    `;
-        
-                    renderVisualization(totalRows, totalColumns, orientation);
-                }
-        
-                function renderVisualization(rows, columns, orientation) {
-                    const visualization = document.getElementById("visualization");
-                    visualization.innerHTML = "";
-                    visualization.style.gridTemplateColumns = orientation === "horizontal" 
-                        ? `repeat(${columns}, auto)` 
-                        : `repeat(${rows}, auto)`;
-        
-                    const panelWidth = "60px";
-                    const panelHeight = "34px";
-        
-                    for (let i = 0; i < rows * columns; i++) {
-                        const panel = document.createElement("div");
-                        panel.className = "panel";
-                        if (orientation === "vertical") {
-                            panel.style.width = panelHeight;
-                            panel.style.height = panelWidth;
-                        } else {
-                            panel.style.width = panelWidth;
-                            panel.style.height = panelHeight;
-                        }
-                        panel.innerText = i + 1;
-                        visualization.appendChild(panel);
-                    }
-                }
-        
-                // LED 계산기 함수
-                function calculateLEDSize() {
-                    const product = document.getElementById("led-product").value;
-                    const rowCount = parseInt(document.getElementById("led-rows").value, 10);
-                    const columnCount = parseInt(document.getElementById("led-columns").value, 10);
-        
-                    let panelWidth, panelHeight, pixelPitch, powerConsumption, unitPrices;
-        
-                    if (product === "1.25") {
-                        panelWidth = 600;
-                        panelHeight = 337.5;
-                        pixelPitch = 1.25;
-                        powerConsumption = 120;
-                        unitPrices = { procurement: 3500000, retail: 1323300, dealer: 1140700 };
-                    } else if (product === "1.56") {
-                        panelWidth = 600;
-                        panelHeight = 337.5;
-                        pixelPitch = 1.5625;
-                        powerConsumption = 130;
-                        unitPrices = { procurement: 1990000, retail: 833800, dealer: 718300 };
-                    } else if (product === "1.87") {
-                        panelWidth = 600;
-                        panelHeight = 337.5;
-                        pixelPitch = 1.875;
-                        powerConsumption = 130;
-                        unitPrices = { procurement: 1560000, retail: 720500, dealer: 620400 };
-                    } else if (product === "2.5") {
-                        panelWidth = 480;
-                        panelHeight = 480;
-                        pixelPitch = 2.5;
-                        powerConsumption = 180;
-                        unitPrices = { procurement: 950000, retail: 523600, dealer: 451000 };
-                    }
-        
-                    if (rowCount && columnCount) {
-                        const totalPanels = rowCount * columnCount;
-                        const totalWidth = panelWidth * columnCount;
-                        const totalHeight = panelHeight * rowCount;
-        
-                        const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
-                        const divisor = gcd(totalWidth, totalHeight);
-                        const aspectWidth = totalWidth / divisor;
-                        const aspectHeight = totalHeight / divisor;
-        
-                        let standardAspectRatio = `${aspectWidth}:${aspectHeight}`;
-                        if (aspectWidth / aspectHeight > 1.7 && aspectWidth / aspectHeight < 1.8) {
-                            standardAspectRatio = "16:9";
-                        } else if (aspectWidth / aspectHeight > 1.3 && aspectWidth / aspectHeight < 1.4) {
-                            standardAspectRatio = "4:3";
-                        }
-        
-                        const totalArea = (totalWidth * totalHeight) / 1000000;
-                        const resolutionWidth = Math.floor(totalWidth / pixelPitch);
-                        const resolutionHeight = Math.floor(totalHeight / pixelPitch);
-                        const diagonalInInches = (Math.sqrt(Math.pow(totalWidth / 25.4, 2) + Math.pow(totalHeight / 25.4, 2))).toFixed(2);
-                        const totalPower = totalPanels * powerConsumption;
-                        const totalPrices = {
-                            procurement: totalPanels * unitPrices.procurement,
-                            retail: totalPanels * unitPrices.retail,
-                            dealer: totalPanels * unitPrices.dealer
-                        };
-        
-                        renderLEDVisualization(rowCount, columnCount, product);
-        
-                        document.getElementById("led-result").innerHTML = ` 
-                            <p>제품군: P${product}</p>
-                            <p>전체 가로 크기: ${totalWidth} mm</p>
-                            <p>전체 세로 크기: ${totalHeight} mm</p>
-                            <p>전체 면적: ${totalArea.toFixed(2)} m²</p>
-                            <p>화면 비율: ${standardAspectRatio}</p>
-                            <p>해상도: ${resolutionWidth} x ${resolutionHeight} (픽셀)</p>
-                            <p>대각선 길이: ${diagonalInInches} 인치</p>
-                            <p>최대소비전력: ${totalPower} W</p>
-                            <p>조달가: ₩${totalPrices.procurement.toLocaleString()}</p>
-                            <p>민수(소비자가): ₩${totalPrices.retail.toLocaleString()}</p>
-                            <p>민수(대리점가): ₩${totalPrices.dealer.toLocaleString()}</p>
-                        `;
-                    } else {
-                        document.getElementById("led-result").innerHTML = "<p>값을 모두 입력해주세요.</p>";
-                        document.getElementById("led-visualization").innerHTML = "";
-                    }
-                }
-        
-                function recommendProduct() {
-                    const width = parseInt(document.getElementById("width").value, 10);
-                    const height = parseInt(document.getElementById("height").value, 10);
-                    const selectedProductPitch = document.getElementById("led-product").value;
 
-                    if (!width || !height) {
-                        document.getElementById("recommendedProduct").innerHTML = "<p>가로 및 세로 크기를 입력해주세요.</p>";
-                        return;
-                    }
+        function updateStepCounter(step) {
+            const el = document.getElementById('stepCounter');
+            if (!el) return;
+            if (step >= 4) el.innerText = '완료';
+            else el.innerText = `${step}/3`;
+        }
 
-                    // 선택된 제품의 패널 크기 정보
-                    let panelInfo;
-                    if (selectedProductPitch === "2.5") {
-                        panelInfo = { name: `P${selectedProductPitch}`, width: 480, height: 480 };
-                    } else {
-                        panelInfo = { name: `P${selectedProductPitch}`, width: 600, height: 337.5 };
-                    }
+        function goToStep(step) {
+            currentStep = step;
+            document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+            if (step >= 4) document.getElementById('resultStep').classList.add('active');
+            else document.getElementById(`step${step}`).classList.add('active');
+            updateProgress(step >= 4 ? 4 : step);
+            updateStepCounter(step);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-                    // 필요한 패널 수 계산
-                    const columns = Math.ceil(width / panelInfo.width);
-                    const rows = Math.ceil(height / panelInfo.height);
-                    const totalWidth = columns * panelInfo.width;
-                    const totalHeight = rows * panelInfo.height;
-                    
-                    // 오차 계산
-                    const widthDiff = Math.abs(totalWidth - width);
-                    const heightDiff = Math.abs(totalHeight - height);
+        function nextStep(current, data) {
+            userData = { ...userData, ...data };
+            if (current === 2) updateStep3UI();
+            goToStep(current + 1);
+        }
 
-                    // 결과 표시
-                    document.getElementById("recommendedProduct").innerHTML = 
-                        `<p>선택된 제품 ${panelInfo.name} 기준:<br>
-                        필요한 크기: ${width}mm x ${height}mm<br>
-                        실제 설치 크기: ${totalWidth}mm x ${totalHeight}mm<br>
-                        배열: ${rows}단 ${columns}열<br>
-                        오차: 가로 ${widthDiff}mm, 세로 ${heightDiff}mm</p>`;
-                }
-        
-                function renderLEDVisualization(rows, columns, product) {
-                    const visualization = document.getElementById("led-visualization");
-                    visualization.innerHTML = "";
-                    visualization.style.gridTemplateColumns = `repeat(${columns}, auto)`;
-        
-                    const panelWidth = product === "2.5" ? "40px" : "60px";
-                    const panelHeight = product === "2.5" ? "40px" : "34px";
-        
-                    for (let i = 0; i < rows * columns; i++) {
-                        const panel = document.createElement("div");
-                        panel.className = "panel";
-                        panel.style.width = panelWidth;
-                        panel.style.height = panelHeight;
-                        panel.innerText = i + 1;
-                        visualization.appendChild(panel);
-                    }
-                }
-            </script>
-        </body>
-        </html>
+        function prevStep(current) {
+            const target = Math.max(1, current - 1);
+            goToStep(target);
+        }
+
+        function setExtra(key, val, el) {
+            userData[key] = val;
+            const parent = el.parentElement;
+            parent.querySelectorAll('.extra-btn').forEach(btn => btn.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function updateStep3UI() {
+            const { event } = userData;
+            const eatLabel = document.getElementById('eatLabel');
+            const pplLabel = document.getElementById('pplLabel');
+            if (!eatLabel || !pplLabel) return;
+
+            if (event === 'funeral') {
+                pplLabel.innerText = '동행 인원 (본인 포함)';
+                eatLabel.innerText = '식사/접객 여부';
+            } else if (event === 'baby') {
+                pplLabel.innerText = '동행 인원 (본인 포함)';
+                eatLabel.innerText = '식사 여부';
+            } else {
+                pplLabel.innerText = '동행 인원 (본인 포함)';
+                eatLabel.innerText = '식사 여부';
+            }
+        }
+
+        function showResult() {
+            const { event, score, ppl, eat } = userData;
+            if (!event || !score) return;
+
+            // 1) 관계 기반 기본 금액 (만원)
+            let baseAmount = 5;
+            if (score >= 10) baseAmount = 20;
+            else if (score >= 7) baseAmount = 10;
+            else if (score >= 4) baseAmount = 7;
+            else baseAmount = 5;
+
+            // 2) 행사별 기본 보정 (과도한 추천 방지)
+            // - 돌잔치: 결혼식 대비 한 단계 낮게
+            // - 장례식: 관계가 아주 가까워도 상한을 다소 보수적으로
+            if (event === 'baby') baseAmount = Math.max(5, baseAmount - 2);
+            if (event === 'funeral') baseAmount = Math.min(baseAmount, 15);
+
+            // 3) 식사/접객(인원) 보정
+            let finalAmount = baseAmount;
+            const mealCost = event === 'baby' ? 5 : event === 'funeral' ? 3 : 7;
+
+            if (eat === 'yes') {
+                // 다인원 계산: (인원수 * 식대/접객비)보다 적으면 그 수준으로 보정
+                const totalMealCost = ppl * mealCost;
+                finalAmount = Math.max(finalAmount, totalMealCost);
+
+                // 결혼식은 식사 동반 시 '지인급 이상' 최소 하한을 둠
+                if (event === 'wedding' && score >= 4) finalAmount = Math.max(finalAmount, 10);
+            } else {
+                // 식사/접객이 없으면(또는 답례품) 너무 큰 경우만 보수적으로 조정
+                if (finalAmount >= 15) finalAmount -= 2;
+            }
+
+            // 4) 5만원 단위 절상
+            finalAmount = Math.ceil(finalAmount / 5) * 5;
+
+            // 결과 화면 업데이트
+            document.getElementById('totalAmount').innerText = finalAmount;
+
+            const minRange = Math.max(5, finalAmount - 5);
+            const maxRange = finalAmount + 5;
+            document.getElementById('rangeText').innerText = `추천 범위: ${minRange}~${maxRange}만원`;
+
+            const lines = [];
+            if (event === 'wedding') {
+                lines.push('최근 고물가/평균 식대를 반영해 계산했어요.');
+                if (eat === 'yes') lines.push(`${ppl}명 기준 식사 비용을 감안했어요.`);
+                else lines.push('식사/답례품 여부를 반영해 보수적으로 조정했어요.');
+            } else if (event === 'baby') {
+                lines.push('결혼식 대비 한 단계 낮은 기준으로 추천했어요.');
+                if (eat === 'yes') lines.push(`${ppl}명 기준 뷔페 비용을 감안했어요.`);
+                else lines.push('식사/답례품 여부를 반영해 보수적으로 조정했어요.');
+            } else {
+                lines.push('조의의 예우를 우선하는 방향으로 과도한 추천을 피했어요.');
+                if (eat === 'yes') lines.push(`${ppl}명 기준 접객/식사 비용을 일부 감안했어요.`);
+            }
+            lines.push('마지막으로 5만원 단위로 정리했어요.');
+
+            document.getElementById('analysisBox').innerHTML =
+                `<ul class="list-disc pl-5 space-y-1">${lines.map(t => `<li>${t}</li>`).join('')}</ul>`;
+
+            goToStep(4);
+        }
+    </script>
+</body>
+</html>
