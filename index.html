@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>얼마내 PRO - 맞춤 경조사 가이드</title>
+    <title>얼마내 PRO - 맞춤 경조사 매니저</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
@@ -17,210 +17,475 @@
 <body class="flex items-center justify-center min-h-screen p-4">
 
     <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div class="h-2 bg-gray-100 flex">
-            <div id="progressBar" class="h-full bg-blue-600 transition-all duration-500" style="width: 25%;"></div>
+        <div id="progressContainer" class="h-2 bg-gray-100 hidden">
+            <div id="progressBar" class="h-full bg-blue-600 transition-all duration-500" style="width: 0%;"></div>
         </div>
 
         <div class="p-8">
-            <div class="flex items-center justify-between mb-6">
-                <p id="stepCounter" class="text-xs font-semibold text-gray-400">1/3</p>
-                <p class="text-xs text-gray-400">단위: 만원</p>
-            </div>
-            <div id="step1" class="step-content active">
-                <h2 class="text-2xl font-bold mb-2">어떤 경조사인가요?</h2>
-                <p class="text-gray-500 mb-8 text-sm">행사 성격에 따라 기준 금액이 달라집니다.</p>
+            <div id="mainMenu" class="step-content active text-center">
+                <h1 class="text-3xl font-black text-gray-800 mb-2">얼마내 PRO 💰</h1>
+                <p class="text-gray-500 mb-10 text-sm">경조사 고민, 기록부터 계산까지 한번에</p>
                 <div class="grid grid-cols-1 gap-4">
-                    <button type="button" onclick="nextStep(1, {event: 'wedding'})" class="flex items-center p-5 border-2 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">
-                        <span class="text-3xl mr-4">💍</span>
-                        <div class="text-left"><p class="font-bold">결혼식</p><p class="text-xs text-gray-400">식대와 장소 고려</p></div>
+                    <button onclick="startGuide()" class="group p-6 border-2 border-blue-100 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left">
+                        <span class="text-3xl mb-2 block">💍</span>
+                        <p class="font-bold text-xl group-hover:text-blue-600">축의금 가이드</p>
+                        <p class="text-xs text-gray-400">상황에 맞는 적정 금액 계산기</p>
                     </button>
-                    <button type="button" onclick="nextStep(1, {event: 'funeral'})" class="flex items-center p-5 border-2 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">
-                        <span class="text-3xl mr-4">🙏</span>
-                        <div class="text-left"><p class="font-bold">장례식</p><p class="text-xs text-gray-400">조의와 위로의 마음</p></div>
+                    <button onclick="openHistory()" class="group p-6 border-2 border-green-100 rounded-2xl hover:border-green-500 hover:bg-green-50 transition-all text-left">
+                        <span class="text-3xl mb-2 block">📖</span>
+                        <p class="font-bold text-xl group-hover:text-green-600">나의 경조사 장부</p>
+                        <p class="text-xs text-gray-400">지인 내역 기록 및 물가 가치 확인</p>
                     </button>
-                    <button type="button" onclick="nextStep(1, {event: 'baby'})" class="flex items-center p-5 border-2 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">
-                        <span class="text-3xl mr-4">👶</span>
-                        <div class="text-left"><p class="font-bold">돌잔치</p><p class="text-xs text-gray-400">축하와 아이의 첫 생일</p></div>
+                    <button onclick="openBoard()" class="group p-6 border-2 border-purple-100 rounded-2xl hover:border-purple-500 hover:bg-purple-50 transition-all text-left">
+                        <span class="text-3xl mb-2 block">💬</span>
+                        <p class="font-bold text-xl group-hover:text-purple-600">소통방</p>
+                        <p class="text-xs text-gray-400">경조사 관련 글을 가볍게 적어보기</p>
                     </button>
+                </div>
+
+                <div class="mt-10 text-[11px] text-gray-400">
+                    문의 메일 :
+                    <a href="mailto:ebc7412@naver.com" class="underline hover:text-gray-600">ebc7412@naver.com</a>
+                </div>
+            </div>
+
+            <div id="historyStep" class="step-content">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">나의 장부</h2>
+                    <button onclick="showAddForm()" class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-full">+ 추가</button>
+                </div>
+                <div id="addForm" class="hidden bg-gray-50 p-4 rounded-2xl mb-6 border border-gray-100">
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <input type="text" id="hName" placeholder="이름" class="p-3 border rounded-xl text-sm">
+                        <input type="number" id="hYear" placeholder="연도(예: 2015)" class="p-3 border rounded-xl text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <select id="hEvent" class="p-3 border rounded-xl text-sm bg-white">
+                            <option value="결혼식">결혼식</option>
+                            <option value="장례식">장례식</option>
+                            <option value="돌잔치">돌잔치</option>
+                        </select>
+                        <input type="number" id="hAmount" placeholder="금액(만원)" class="p-3 border rounded-xl text-sm">
+                    </div>
+                    <button onclick="saveHistory()" class="w-full bg-blue-600 text-white py-3 rounded-xl text-sm font-bold">내역 저장</button>
+                </div>
+                <div id="historyList" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
+                <button onclick="goHome()" class="w-full mt-6 py-3 text-gray-400 font-medium">처음으로</button>
+            </div>
+
+            <div id="boardStep" class="step-content">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">소통방</h2>
+                        <p class="text-xs text-gray-400 mt-1">간단 게시판 · 기기(브라우저) 내 저장</p>
+                    </div>
+                    <button onclick="toggleWriteForm()" class="text-xs bg-purple-600 text-white px-3 py-1.5 rounded-full">+ 글쓰기</button>
+                </div>
+
+                <div id="writeForm" class="hidden bg-gray-50 p-4 rounded-2xl mb-6 border border-gray-100">
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <input type="text" id="bName" placeholder="닉네임(선택)" class="p-3 border rounded-xl text-sm">
+                        <select id="bCategory" class="p-3 border rounded-xl text-sm bg-white">
+                            <option value="잡담">잡담</option>
+                            <option value="결혼식">결혼식</option>
+                            <option value="장례식">장례식</option>
+                            <option value="돌잔치">돌잔치</option>
+                            <option value="꿀팁">꿀팁</option>
+                        </select>
+                    </div>
+                    <input type="text" id="bTitle" placeholder="제목" class="w-full p-3 border rounded-xl text-sm mb-2">
+                    <textarea id="bContent" placeholder="내용(간단하게)" class="w-full p-3 border rounded-xl text-sm h-28 resize-none mb-3"></textarea>
+                    <button onclick="savePost()" class="w-full bg-purple-600 text-white py-3 rounded-xl text-sm font-bold">글 등록</button>
+                </div>
+
+                <div id="boardList" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
+                <button onclick="goHome()" class="w-full mt-6 py-3 text-gray-400 font-medium">처음으로</button>
+            </div>
+
+            <div id="postDetailStep" class="step-content">
+                <div class="flex justify-between items-center mb-4">
+                    <button onclick="backToBoard()" class="text-sm text-gray-500 hover:text-gray-700">← 목록</button>
+                    <button id="deletePostBtn" onclick="deleteCurrentPost()" class="text-xs text-red-500 hover:text-red-700">삭제</button>
+                </div>
+
+                <div class="bg-white border rounded-2xl p-5 shadow-sm mb-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex-1">
+                            <h3 id="detailTitle" class="text-xl font-extrabold text-gray-900"></h3>
+                            <p id="detailMeta" class="text-[11px] text-gray-400 mt-2"></p>
+                        </div>
+                    </div>
+                    <div id="detailContent" class="mt-4 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap"></div>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-100 rounded-2xl p-4 mb-3">
+                    <p class="text-sm font-bold text-gray-800 mb-3">댓글</p>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <input type="text" id="cName" placeholder="닉네임(선택)" class="p-3 border rounded-xl text-sm bg-white">
+                        <button onclick="addComment()" class="bg-gray-800 text-white rounded-xl text-sm font-bold">댓글 등록</button>
+                    </div>
+                    <textarea id="cContent" placeholder="댓글 내용" class="w-full p-3 border rounded-xl text-sm h-20 resize-none bg-white"></textarea>
+                </div>
+
+                <div id="commentList" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                <button onclick="backToBoard()" class="w-full mt-6 py-3 text-gray-400 font-medium">목록으로</button>
+            </div>
+
+            <div id="step1" class="step-content">
+                <div class="flex justify-between text-xs font-semibold text-gray-400 mb-6"><span>1/3 단계</span><span>단위: 만원</span></div>
+                <h2 class="text-2xl font-bold mb-2">어떤 경조사인가요?</h2>
+                <div class="grid grid-cols-1 gap-3 mt-8">
+                    <button onclick="nextStep(1, {event: 'wedding'})" class="flex items-center p-5 border-2 rounded-2xl hover:bg-blue-50"><span class="text-2xl mr-4">💍</span><div class="text-left font-bold">결혼식</div></button>
+                    <button onclick="nextStep(1, {event: 'funeral'})" class="flex items-center p-5 border-2 rounded-2xl hover:bg-blue-50"><span class="text-2xl mr-4">🙏</span><div class="text-left font-bold">장례식</div></button>
+                    <button onclick="nextStep(1, {event: 'baby'})" class="flex items-center p-5 border-2 rounded-2xl hover:bg-blue-50"><span class="text-2xl mr-4">👶</span><div class="text-left font-bold">돌잔치</div></button>
                 </div>
             </div>
 
             <div id="step2" class="step-content">
+                <div class="flex justify-between text-xs font-semibold text-gray-400 mb-6"><span>2/3 단계</span></div>
                 <h2 class="text-2xl font-bold mb-6">상대방과 얼마나 친한가요?</h2>
                 <div class="space-y-3">
-                    <button type="button" onclick="nextStep(2, {score: 10})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">거의 가족 같은 사이 (절친)</button>
-                    <button type="button" onclick="nextStep(2, {score: 7})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">자주 소통하는 직장 동료/친구</button>
-                    <button type="button" onclick="nextStep(2, {score: 4})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">가끔 연락하는 지인</button>
-                    <button type="button" onclick="nextStep(2, {score: 1})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">연락이 뜸했던 동창/동료</button>
+                    <button onclick="nextStep(2, {score: 10})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium">거의 가족 같은 사이 (절친)</button>
+                    <button onclick="nextStep(2, {score: 7})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium">자주 소통하는 동료/친구</button>
+                    <button onclick="nextStep(2, {score: 4})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium">가끔 연락하는 지인</button>
+                    <button onclick="nextStep(2, {score: 1})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium">연락이 뜸했던 사이</button>
                 </div>
-                <button type="button" onclick="prevStep(2)" class="w-full mt-6 py-3 border rounded-2xl text-gray-600 font-semibold hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">이전</button>
+                <button onclick="prevStep(2)" class="w-full mt-6 py-3 text-gray-400">이전 단계</button>
             </div>
 
             <div id="step3" class="step-content">
+                <div class="flex justify-between text-xs font-semibold text-gray-400 mb-6"><span>3/3 단계</span></div>
                 <h2 class="text-2xl font-bold mb-6">상세 상황을 알려주세요.</h2>
                 <div class="space-y-6">
                     <div>
-                        <p id="pplLabel" class="text-sm font-semibold text-gray-700 mb-3">동행 인원 (본인 포함)</p>
-                        <div class="grid grid-cols-3 gap-2" id="pplGroup">
-                            <button type="button" onclick="setExtra('ppl', 1, this)" class="extra-btn py-3 border rounded-xl active focus:outline-none focus:ring-2 focus:ring-blue-200">1명</button>
-                            <button type="button" onclick="setExtra('ppl', 2, this)" class="extra-btn py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">2명</button>
-                            <button type="button" onclick="setExtra('ppl', 3, this)" class="extra-btn py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">3명</button>
-                            <button type="button" onclick="setExtra('ppl', 4, this)" class="extra-btn py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">4명</button>
-                            <button type="button" onclick="setExtra('ppl', 5, this)" class="extra-btn py-3 border rounded-xl col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-200">5명 이상 (가족)</button>
+                        <p class="text-sm font-semibold text-gray-700 mb-3">동행 인원 (본인 포함)</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setExtra('ppl', 1, this)" class="extra-btn py-3 border rounded-xl active">1명</button>
+                            <button onclick="setExtra('ppl', 2, this)" class="extra-btn py-3 border rounded-xl">2명</button>
+                            <button onclick="setExtra('ppl', 3, this)" class="extra-btn py-3 border rounded-xl">3명 이상</button>
                         </div>
                     </div>
                     <div>
                         <p id="eatLabel" class="text-sm font-semibold text-gray-700 mb-3">식사 여부</p>
                         <div class="flex gap-2">
-                            <button type="button" onclick="setExtra('eat', 'yes', this)" class="extra-btn flex-1 py-3 border rounded-xl active focus:outline-none focus:ring-2 focus:ring-blue-200">식사 함</button>
-                            <button type="button" onclick="setExtra('eat', 'no', this)" class="extra-btn flex-1 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">안 함 / 답례품</button>
+                            <button onclick="setExtra('eat', 'yes', this)" class="extra-btn flex-1 py-3 border rounded-xl active">식사 함</button>
+                            <button onclick="setExtra('eat', 'no', this)" class="extra-btn flex-1 py-3 border rounded-xl">안 함 / 답례품</button>
                         </div>
                     </div>
-                    <button type="button" onclick="showResult()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold mt-4 shadow-lg active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">계산 결과 보기</button>
-                    <button type="button" onclick="prevStep(3)" class="w-full py-3 border rounded-2xl text-gray-600 font-semibold hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">이전</button>
+                    <button onclick="showResult()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg">결과 확인하기</button>
+                    <button onclick="prevStep(3)" class="w-full py-2 text-gray-400">이전 단계</button>
                 </div>
             </div>
 
             <div id="resultStep" class="step-content text-center">
                 <div class="py-10">
                     <p class="text-gray-500 font-medium mb-2">가장 적절한 금액은</p>
-                    <div class="text-6xl font-black text-blue-600 mb-2" aria-live="polite"><span id="totalAmount">0</span>만원</div>
-                    <p id="rangeText" class="text-sm text-gray-500 mb-6"></p>
+                    <div class="text-6xl font-black text-blue-600 mb-4"><span id="totalAmount">0</span>만원</div>
+                    <p id="rangeText" class="text-sm text-gray-400 mb-8"></p>
                     <div id="analysisBox" class="bg-blue-50 p-5 rounded-2xl text-left text-sm text-blue-800 leading-relaxed"></div>
-                    <p class="text-[11px] text-gray-400 mt-4 leading-relaxed">
-                        참고: 지역/식대/관계/회사 관행에 따라 달라질 수 있어요. 무리하지 않는 선에서 조정하세요.
-                    </p>
                 </div>
-                <button type="button" onclick="location.reload()" class="w-full py-3 text-gray-400 font-medium hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200">처음부터 다시 하기</button>
+                <button onclick="goHome()" class="w-full py-4 bg-gray-800 text-white rounded-xl font-bold">메인으로 돌아가기</button>
             </div>
         </div>
     </div>
 
     <script>
         let userData = { event: '', score: 0, ppl: 1, eat: 'yes' };
-        let currentStep = 1;
-        const TOTAL_STEPS = 4; // step1~step3 + result
+        let history = JSON.parse(localStorage.getItem('myGyeongjo')) || [];
+        let boardPosts = JSON.parse(localStorage.getItem('gyeongjoBoard')) || [];
+        let currentPostId = null;
 
-        function updateProgress(step) {
-            const pct = (step / TOTAL_STEPS) * 100;
-            document.getElementById('progressBar').style.width = pct + '%';
-        }
-
-        function updateStepCounter(step) {
-            const el = document.getElementById('stepCounter');
-            if (!el) return;
-            if (step >= 4) el.innerText = '완료';
-            else el.innerText = `${step}/3`;
-        }
-
-        function goToStep(step) {
-            currentStep = step;
+        function goHome() {
             document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
-            if (step >= 4) document.getElementById('resultStep').classList.add('active');
-            else document.getElementById(`step${step}`).classList.add('active');
-            updateProgress(step >= 4 ? 4 : step);
-            updateStepCounter(step);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('mainMenu').classList.add('active');
+            document.getElementById('progressContainer').classList.add('hidden');
+        }
+
+        function startGuide() {
+            userData = { event: '', score: 0, ppl: 1, eat: 'yes' }; // 데이터 초기화
+            document.getElementById('mainMenu').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('progressContainer').classList.remove('hidden');
+            updateProgress(1);
         }
 
         function nextStep(current, data) {
             userData = { ...userData, ...data };
-            if (current === 2) updateStep3UI();
-            goToStep(current + 1);
+            document.getElementById(`step${current}`).classList.remove('active');
+            document.getElementById(`step${current+1}`).classList.add('active');
+            updateProgress(current + 1);
         }
 
         function prevStep(current) {
-            const target = Math.max(1, current - 1);
-            goToStep(target);
+            document.getElementById(`step${current}`).classList.remove('active');
+            document.getElementById(`step${current-1}`).classList.add('active');
+            updateProgress(current - 1);
         }
 
         function setExtra(key, val, el) {
             userData[key] = val;
-            const parent = el.parentElement;
-            parent.querySelectorAll('.extra-btn').forEach(btn => btn.classList.remove('active'));
+            el.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
         }
 
-        function updateStep3UI() {
-            const { event } = userData;
-            const eatLabel = document.getElementById('eatLabel');
-            const pplLabel = document.getElementById('pplLabel');
-            if (!eatLabel || !pplLabel) return;
+        function updateProgress(step) {
+            document.getElementById('progressBar').style.width = (step / 3) * 100 + '%';
+        }
 
-            if (event === 'funeral') {
-                pplLabel.innerText = '동행 인원 (본인 포함)';
-                eatLabel.innerText = '식사/접객 여부';
-            } else if (event === 'baby') {
-                pplLabel.innerText = '동행 인원 (본인 포함)';
-                eatLabel.innerText = '식사 여부';
-            } else {
-                pplLabel.innerText = '동행 인원 (본인 포함)';
-                eatLabel.innerText = '식사 여부';
+        // --- 계산 로직 ---
+        function showResult() {
+            const { event, score, ppl, eat } = userData;
+            let base = 5;
+            if (score >= 10) base = 20;
+            else if (score >= 7) base = 10;
+            else if (score >= 4) base = 7;
+
+            if (event === 'baby') base = Math.max(5, base - 2);
+            if (event === 'funeral') base = Math.min(base, 15);
+
+            let final = base;
+            const mealCost = event === 'wedding' ? 7 : 5;
+            if (eat === 'yes') {
+                final = Math.max(final, ppl * mealCost);
+                if (event === 'wedding' && score >= 4) final = Math.max(final, 10);
+            }
+
+            final = Math.ceil(final / 5) * 5;
+            
+            document.getElementById('totalAmount').innerText = final;
+            document.getElementById('rangeText').innerText = `권장 범위: ${Math.max(5, final-5)}~${final+5}만원`;
+            document.getElementById('analysisBox').innerHTML = `<ul class='list-disc pl-5'><li>최근 물가와 식대(${ppl}인)를 반영했습니다.</li><li>관계의 깊이를 최우선으로 고려했습니다.</li></ul>`;
+            
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('resultStep').classList.add('active');
+        }
+
+        // --- 장부 기능 ---
+        function openHistory() {
+            document.getElementById('mainMenu').classList.remove('active');
+            document.getElementById('historyStep').classList.add('active');
+            renderHistory();
+        }
+
+        function showAddForm() { document.getElementById('addForm').classList.toggle('hidden'); }
+
+        function saveHistory() {
+            const name = document.getElementById('hName').value;
+            const year = parseInt(document.getElementById('hYear').value);
+            const event = document.getElementById('hEvent').value;
+            const amount = parseInt(document.getElementById('hAmount').value);
+            if(!name || !year || !amount) return alert('내용을 입력해주세요.');
+            history.unshift({ name, year, event, amount });
+            localStorage.setItem('myGyeongjo', JSON.stringify(history));
+            document.getElementById('addForm').classList.add('hidden');
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const currentYear = 2026; // 현재 연도 기준
+            document.getElementById('historyList').innerHTML = history.map((item, index) => {
+                const years = currentYear - item.year;
+                const nowVal = Math.round(item.amount * Math.pow(1.03, years)); // 연 3% 물가상승 복리
+                return `
+                    <div class="p-4 bg-white border rounded-2xl shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <div class="flex-1">
+                                <p class="text-[10px] text-blue-500 font-bold mb-1">${item.year}년 · ${item.event}</p>
+                                <h3 class="font-extrabold text-gray-800">${item.name}</h3>
+                            </div>
+                            <div class="text-right mr-3">
+                                <p class="text-lg font-black text-gray-800">${item.amount}만원</p>
+                                <p class="text-[10px] text-orange-500">현재 가치 약 ${nowVal}만원</p>
+                            </div>
+                            <button onclick="deleteHistory(${index})" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors" title="삭제">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteHistory(index) {
+            if (confirm('정말 삭제하시겠습니까?')) {
+                history.splice(index, 1);
+                localStorage.setItem('myGyeongjo', JSON.stringify(history));
+                renderHistory();
             }
         }
 
-        function showResult() {
-            const { event, score, ppl, eat } = userData;
-            if (!event || !score) return;
+        // --- 소통방(간단 게시판) ---
+        function openBoard() {
+            document.getElementById('mainMenu').classList.remove('active');
+            document.getElementById('boardStep').classList.add('active');
+            document.getElementById('writeForm').classList.add('hidden');
+            renderBoard();
+        }
 
-            // 1) 관계 기반 기본 금액 (만원)
-            let baseAmount = 5;
-            if (score >= 10) baseAmount = 20;
-            else if (score >= 7) baseAmount = 10;
-            else if (score >= 4) baseAmount = 7;
-            else baseAmount = 5;
+        function toggleWriteForm() {
+            document.getElementById('writeForm').classList.toggle('hidden');
+        }
 
-            // 2) 행사별 기본 보정 (과도한 추천 방지)
-            // - 돌잔치: 결혼식 대비 한 단계 낮게
-            // - 장례식: 관계가 아주 가까워도 상한을 다소 보수적으로
-            if (event === 'baby') baseAmount = Math.max(5, baseAmount - 2);
-            if (event === 'funeral') baseAmount = Math.min(baseAmount, 15);
+        function persistBoard() {
+            localStorage.setItem('gyeongjoBoard', JSON.stringify(boardPosts));
+        }
 
-            // 3) 식사/접객(인원) 보정
-            let finalAmount = baseAmount;
-            const mealCost = event === 'baby' ? 5 : event === 'funeral' ? 3 : 7;
+        function formatKoreanDate(ts) {
+            try {
+                return new Date(ts).toLocaleString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+            } catch {
+                return '';
+            }
+        }
 
-            if (eat === 'yes') {
-                // 다인원 계산: (인원수 * 식대/접객비)보다 적으면 그 수준으로 보정
-                const totalMealCost = ppl * mealCost;
-                finalAmount = Math.max(finalAmount, totalMealCost);
+        function savePost() {
+            const name = (document.getElementById('bName').value || '').trim() || '익명';
+            const category = document.getElementById('bCategory').value;
+            const title = (document.getElementById('bTitle').value || '').trim();
+            const content = (document.getElementById('bContent').value || '').trim();
 
-                // 결혼식은 식사 동반 시 '지인급 이상' 최소 하한을 둠
-                if (event === 'wedding' && score >= 4) finalAmount = Math.max(finalAmount, 10);
-            } else {
-                // 식사/접객이 없으면(또는 답례품) 너무 큰 경우만 보수적으로 조정
-                if (finalAmount >= 15) finalAmount -= 2;
+            if (!title || !content) return alert('제목과 내용을 입력해주세요.');
+
+            const post = {
+                id: String(Date.now()) + '-' + Math.random().toString(16).slice(2),
+                name,
+                category,
+                title,
+                content,
+                createdAt: Date.now(),
+                views: 0,
+                comments: []
+            };
+
+            boardPosts.unshift(post);
+            persistBoard();
+
+            document.getElementById('bTitle').value = '';
+            document.getElementById('bContent').value = '';
+            document.getElementById('writeForm').classList.add('hidden');
+            renderBoard();
+        }
+
+        function renderBoard() {
+            const el = document.getElementById('boardList');
+            if (!boardPosts.length) {
+                el.innerHTML = `
+                    <div class="p-6 text-center text-sm text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl">
+                        아직 글이 없어요. 첫 글을 남겨보세요!
+                    </div>
+                `;
+                return;
             }
 
-            // 4) 5만원 단위 절상
-            finalAmount = Math.ceil(finalAmount / 5) * 5;
+            el.innerHTML = boardPosts.map(post => `
+                <button onclick="openPost('${post.id}')" class="w-full text-left p-4 bg-white border rounded-2xl shadow-sm hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 border border-purple-100">${post.category}</span>
+                                <span class="text-[10px] text-gray-400">${formatKoreanDate(post.createdAt)}</span>
+                            </div>
+                            <p class="font-extrabold text-gray-900 truncate">${post.title}</p>
+                            <p class="text-[11px] text-gray-400 mt-1 truncate">${post.name} · 조회 ${post.views} · 댓글 ${(post.comments || []).length}</p>
+                        </div>
+                        <span class="text-gray-300 text-lg">›</span>
+                    </div>
+                </button>
+            `).join('');
+        }
 
-            // 결과 화면 업데이트
-            document.getElementById('totalAmount').innerText = finalAmount;
+        function openPost(id) {
+            const post = boardPosts.find(p => p.id === id);
+            if (!post) return alert('글을 찾을 수 없어요.');
 
-            const minRange = Math.max(5, finalAmount - 5);
-            const maxRange = finalAmount + 5;
-            document.getElementById('rangeText').innerText = `추천 범위: ${minRange}~${maxRange}만원`;
+            currentPostId = id;
+            post.views = (post.views || 0) + 1;
+            persistBoard();
 
-            const lines = [];
-            if (event === 'wedding') {
-                lines.push('최근 고물가/평균 식대를 반영해 계산했어요.');
-                if (eat === 'yes') lines.push(`${ppl}명 기준 식사 비용을 감안했어요.`);
-                else lines.push('식사/답례품 여부를 반영해 보수적으로 조정했어요.');
-            } else if (event === 'baby') {
-                lines.push('결혼식 대비 한 단계 낮은 기준으로 추천했어요.');
-                if (eat === 'yes') lines.push(`${ppl}명 기준 뷔페 비용을 감안했어요.`);
-                else lines.push('식사/답례품 여부를 반영해 보수적으로 조정했어요.');
-            } else {
-                lines.push('조의의 예우를 우선하는 방향으로 과도한 추천을 피했어요.');
-                if (eat === 'yes') lines.push(`${ppl}명 기준 접객/식사 비용을 일부 감안했어요.`);
+            document.getElementById('boardStep').classList.remove('active');
+            document.getElementById('postDetailStep').classList.add('active');
+
+            document.getElementById('detailTitle').innerText = post.title;
+            document.getElementById('detailMeta').innerText = `${post.category} · ${post.name} · ${formatKoreanDate(post.createdAt)} · 조회 ${post.views}`;
+            document.getElementById('detailContent').innerText = post.content;
+
+            document.getElementById('cName').value = '';
+            document.getElementById('cContent').value = '';
+            renderComments();
+        }
+
+        function backToBoard() {
+            document.getElementById('postDetailStep').classList.remove('active');
+            document.getElementById('boardStep').classList.add('active');
+            renderBoard();
+        }
+
+        function deleteCurrentPost() {
+            if (!currentPostId) return;
+            const post = boardPosts.find(p => p.id === currentPostId);
+            if (!post) return;
+
+            if (!confirm('이 글을 삭제하시겠습니까?')) return;
+            boardPosts = boardPosts.filter(p => p.id !== currentPostId);
+            persistBoard();
+            currentPostId = null;
+            backToBoard();
+        }
+
+        function addComment() {
+            if (!currentPostId) return;
+            const post = boardPosts.find(p => p.id === currentPostId);
+            if (!post) return;
+
+            const name = (document.getElementById('cName').value || '').trim() || '익명';
+            const content = (document.getElementById('cContent').value || '').trim();
+            if (!content) return alert('댓글 내용을 입력해주세요.');
+
+            post.comments = post.comments || [];
+            post.comments.unshift({
+                id: String(Date.now()) + '-' + Math.random().toString(16).slice(2),
+                name,
+                content,
+                createdAt: Date.now()
+            });
+            persistBoard();
+            document.getElementById('cContent').value = '';
+            renderComments();
+        }
+
+        function deleteComment(commentId) {
+            if (!currentPostId) return;
+            const post = boardPosts.find(p => p.id === currentPostId);
+            if (!post) return;
+
+            if (!confirm('댓글을 삭제하시겠습니까?')) return;
+            post.comments = (post.comments || []).filter(c => c.id !== commentId);
+            persistBoard();
+            renderComments();
+        }
+
+        function renderComments() {
+            const post = boardPosts.find(p => p.id === currentPostId);
+            const el = document.getElementById('commentList');
+            if (!post) { el.innerHTML = ''; return; }
+
+            const comments = post.comments || [];
+            if (!comments.length) {
+                el.innerHTML = `<div class="p-4 text-center text-sm text-gray-400">아직 댓글이 없어요.</div>`;
+                return;
             }
-            lines.push('마지막으로 5만원 단위로 정리했어요.');
 
-            document.getElementById('analysisBox').innerHTML =
-                `<ul class="list-disc pl-5 space-y-1">${lines.map(t => `<li>${t}</li>`).join('')}</ul>`;
-
-            goToStep(4);
+            el.innerHTML = comments.map(c => `
+                <div class="p-3 bg-white border rounded-2xl">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-[11px] font-bold text-gray-700">${c.name} <span class="text-[10px] font-normal text-gray-400">· ${formatKoreanDate(c.createdAt)}</span></p>
+                        <button onclick="deleteComment('${c.id}')" class="text-[11px] text-red-400 hover:text-red-600">삭제</button>
+                    </div>
+                    <p class="text-sm text-gray-700 whitespace-pre-wrap">${c.content}</p>
+                </div>
+            `).join('');
         }
     </script>
 </body>
